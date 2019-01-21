@@ -7,7 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.sq.demo.PoJo.RedisLock;
+import com.sq.demo.core.RedisLock;
 
 /**
  * 用于jemeter测试redis分布式锁
@@ -28,13 +28,18 @@ public class IndexController {
 	
 	@RequestMapping("/index")
 	public String index(){
-		String result = "争锁";
-		if(redisLock.lock("lock", UUID.randomUUID().toString(), 300L)){
-			result = "抢到锁";
-			System.out.println("redis分布式锁");
+		try {
+			String result = "争锁";
+			if(redisLock.lock("lock", UUID.randomUUID().toString(), 300L)){
+				result = "抢到锁";
+				System.out.println("redis分布式锁");
+			}
+			System.out.println(result);
+			return "OK";
+		} catch (Exception e) {
+			e.printStackTrace();
+			return e.getMessage();
 		}
-		System.out.println(result);
-		return "OK";
 	}
 	
 	@RequestMapping("/unlock")

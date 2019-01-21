@@ -3,6 +3,8 @@ package com.sq.demo;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+import java.util.concurrent.CountDownLatch;
+
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,6 +15,7 @@ import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
+import com.sq.demo.service.SecKill;
 import com.sq.demo.utils.MyRedisUtil;
 
 @RunWith(SpringRunner.class)
@@ -72,6 +75,45 @@ public class SpringBootStudyRedisApplicationTests {
 			.andExpect(status().isOk())
 			.andExpect(content().string("ok"));
 	}
+	
+	// 测试redislock
+	@Autowired
+	private SecKill secKill;
+	@Test
+	public void tesetRedisLock(){
+		long startTime = System.currentTimeMillis();
+		CountDownLatch beginCount = new CountDownLatch(1);
+		CountDownLatch endCount = new CountDownLatch(500);
+		Thread[] threads = new Thread[500];
+		for(int i=0;i<500;i++){
+			threads[i] = new Thread(new Runnable() {
+				@Override
+				public void run() {
+					try {
+						beginCount.await();
+						secKill.secKill();
+						endCount.countDown();
+					} catch (InterruptedException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+				}
+			});
+			threads[i].start();
+		}
+		beginCount.countDown();
+		try {
+			endCount.await();
+			long endTime = System.currentTimeMillis();
+			System.out.println("执行时间：" + (endTime - startTime));
+			System.out.println(secKill.n + "");
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+	
+	
 	
 	@Test
 	public void contextLoads() {

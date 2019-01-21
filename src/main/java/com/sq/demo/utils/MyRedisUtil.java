@@ -53,6 +53,9 @@ public class MyRedisUtil {
 		return this.stringRedisTemplate.delete(key);
 	}
 	
+	public boolean exists(String key){
+		return this.stringRedisTemplate.hasKey(key);
+	}
 	
 	/*********************springboot中操作redis的bitmap或者一些扩展操作可以使用如下的方式*******************/
 	
