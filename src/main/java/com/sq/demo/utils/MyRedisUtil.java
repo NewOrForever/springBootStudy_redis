@@ -1,5 +1,8 @@
 package com.sq.demo.utils;
 
+import org.redisson.Redisson;
+import org.redisson.api.RedissonClient;
+import org.redisson.config.Config;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
 import org.springframework.data.redis.connection.RedisConnection;
@@ -35,6 +38,17 @@ public class MyRedisUtil {
 	
 	@Autowired
 	private RedisTemplate<String, String> redisTemplate;
+	
+	@Autowired 
+	private Redisson redission;
+	/**
+	 * redission尝试使用分布式锁(单例)
+	 */
+	public void redissionDemo(){
+		Config config = new Config();
+		RedissonClient redissonClient = redission.create(config);
+	}
+	
 	
 	public void set(String key, String value){
 		ValueOperations<String, String> opsForValue = stringRedisTemplate.opsForValue();

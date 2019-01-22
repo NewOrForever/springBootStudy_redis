@@ -38,7 +38,6 @@ public class RedisLock {
 	 * @throws InterruptedException 
 	 */
 	public boolean lock(String lockKey, String lockValue, long expireTime) throws InterruptedException{
-		
 		/**
 		 * 1. 加锁，其他线程阻塞
 		 * 2. 争锁失败，阻塞，轮循锁

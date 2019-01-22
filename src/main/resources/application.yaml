@@ -7,6 +7,6 @@ spring:
     port: 6379
     password: D164D99C46D45BE6B1E7585FF7EA10E7 #springboot
     
-          
+
       
     
